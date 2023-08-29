@@ -1,13 +1,7 @@
-import React from "react";
+import React, { useEffect } from "react";
 import MapView, { LatLng, Marker } from "react-native-maps";
 import { StyleSheet, View } from "react-native";
-
-const initialCorrdinate = {
-  latitude: 48.866534,
-  longitude: 2.361626,
-  latitudeDelta: 0.05,
-  longitudeDelta: 0.05,
-};
+import * as Location from "expo-location";
 
 type Marker = {
   latLng: LatLng;
@@ -29,7 +23,7 @@ const initialMarkers: Marker[] = [
 ];
 
 export default function App() {
-  const [region, setRegion] = React.useState(initialCorrdinate);
+  const [region, setRegion] = React.useState<any>(null);
   const [markers, setMarkers] = React.useState(initialMarkers);
 
   function onRegionChange(region: any) {
@@ -46,10 +40,28 @@ export default function App() {
     setMarkers(newMarkers);
   }
 
+  async function getLocationPermission() {
+    let { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") {
+      alert("Permission denied");
+      return;
+    }
+    let location = await Location.getCurrentPositionAsync({});
+    const current: LatLng = {
+      latitude: location.coords.latitude,
+      longitude: location.coords.longitude,
+    };
+    setRegion({ latitudeDelta: 0.05, longitudeDelta: 0.05, ...current });
+  }
+
+  useEffect(() => {
+    getLocationPermission();
+  }, []);
+
   return (
     <View style={styles.container}>
       <MapView
-        initialRegion={initialCorrdinate}
+        initialRegion={region}
         onRegionChange={onRegionChange}
         style={styles.map}
         onLongPress={(e) => {
