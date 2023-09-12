@@ -1,7 +1,8 @@
 import React, { useEffect } from "react";
-import MapView, { LatLng, Marker } from "react-native-maps";
-import { StyleSheet, View } from "react-native";
+import MapView, { LatLng, Marker, AnimatedRegion } from "react-native-maps";
+import { Button, StyleSheet, View } from "react-native";
 import * as Location from "expo-location";
+import { Dimensions } from "react-native";
 
 type Marker = {
   latLng: LatLng;
@@ -47,11 +48,16 @@ export default function App() {
       return;
     }
     let location = await Location.getCurrentPositionAsync({});
+
     const current: LatLng = {
       latitude: location.coords.latitude,
       longitude: location.coords.longitude,
     };
-    setRegion({ latitudeDelta: 0.05, longitudeDelta: 0.05, ...current });
+    setRegion({
+      ...current,
+      latitudeDelta: 0.009,
+      longitudeDelta: 0.009,
+    });
   }
 
   useEffect(() => {
@@ -60,29 +66,36 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <MapView
-        initialRegion={region}
-        onRegionChange={onRegionChange}
-        style={styles.map}
-        onLongPress={(e) => {
-          addMarker(e.nativeEvent.coordinate);
-        }}
-        onMarkerPress={(e) => {
-          console.log(e.nativeEvent);
-        }}
-        onPoiClick={(e) => {
-          addMarker(e.nativeEvent.coordinate, e.nativeEvent.name);
-        }}
-      >
-        {markers.map((marker, index) => (
-          <Marker
-            key={index}
-            coordinate={marker.latLng}
-            title={marker.title}
-            description={marker.description}
-          />
-        ))}
-      </MapView>
+      {region && (
+        <MapView
+          style={styles.map}
+          initialRegion={region}
+          onRegionChange={onRegionChange}
+          showsUserLocation
+          followsUserLocation
+          zoomEnabled
+          scrollEnabled
+          showsScale
+          // onLongPress={(e) => {
+          //   addMarker(e.nativeEvent.coordinate);
+          // }}
+          // onMarkerPress={(e) => {
+          //   console.log(e.nativeEvent);
+          // }}
+          // onPoiClick={(e) => {
+          //   addMarker(e.nativeEvent.coordinate, e.nativeEvent.name);
+          // }}
+        >
+          {/* {markers.map((marker, index) => (
+            <Marker
+              key={index}
+              coordinate={marker.latLng}
+              title={marker.title}
+              description={marker.description}
+            />
+          ))} */}
+        </MapView>
+      )}
     </View>
   );
 }
