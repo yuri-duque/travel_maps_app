@@ -3,23 +3,25 @@ import MapView, { LatLng, Marker, AnimatedRegion } from "react-native-maps";
 import { Button, StyleSheet, View } from "react-native";
 import * as Location from "expo-location";
 import { Dimensions } from "react-native";
+import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
+import { Input, NativeBaseProvider } from "native-base";
 
 type Marker = {
-  latLng: LatLng;
-  title: string;
-  description: string;
+  name: string;
+  coordinate: LatLng;
+  placeId: string;
 };
 
 const initialMarkers: Marker[] = [
   {
-    latLng: { latitude: 48.866534, longitude: 2.361626 },
-    title: "Paris",
-    description: "Paris",
+    name: "Paris",
+    coordinate: { latitude: 48.866534, longitude: 2.361626 },
+    placeId: "",
   },
   {
-    latLng: { latitude: 48.84944, longitude: 2.41653 },
-    title: "Paris",
-    description: "Paris",
+    name: "Paris",
+    coordinate: { latitude: 48.84944, longitude: 2.41653 },
+    placeId: "",
   },
 ];
 
@@ -31,12 +33,12 @@ export default function App() {
     setRegion(region);
   }
 
-  function addMarker(latLng: LatLng, title = "Paris", description = "Paris") {
+  function addMarker({ coordinate, name, placeId }: Marker) {
     const newMarkers = [...markers];
     newMarkers.push({
-      latLng,
-      title,
-      description,
+      coordinate,
+      name,
+      placeId,
     });
     setMarkers(newMarkers);
   }
@@ -65,8 +67,8 @@ export default function App() {
   }, []);
 
   return (
-    <View style={styles.container}>
-      {region && (
+    <NativeBaseProvider>
+      <View style={styles.container}>
         <MapView
           style={styles.map}
           initialRegion={region}
@@ -76,27 +78,42 @@ export default function App() {
           zoomEnabled
           scrollEnabled
           showsScale
-          // onLongPress={(e) => {
-          //   addMarker(e.nativeEvent.coordinate);
-          // }}
-          // onMarkerPress={(e) => {
-          //   console.log(e.nativeEvent);
-          // }}
-          // onPoiClick={(e) => {
-          //   addMarker(e.nativeEvent.coordinate, e.nativeEvent.name);
-          // }}
+          onLongPress={(e) => {
+            const { coordinate } = e.nativeEvent;
+            addMarker({ name: "custom", coordinate, placeId: "" });
+          }}
+          onMarkerPress={(e) => {
+            console.log(e.nativeEvent);
+          }}
+          onPoiClick={(e) => {
+            const { name, coordinate, placeId } = e.nativeEvent;
+            addMarker({ name, coordinate, placeId });
+          }}
         >
-          {/* {markers.map((marker, index) => (
+          {markers.map((marker, index) => (
             <Marker
               key={index}
-              coordinate={marker.latLng}
-              title={marker.title}
-              description={marker.description}
+              coordinate={marker.coordinate}
+              title={marker.name}
             />
-          ))} */}
+          ))}
         </MapView>
-      )}
-    </View>
+
+        <GooglePlacesAutocomplete
+          query={{
+            key: "AIzaSyC9kogNwEtX1xBO-nNzawbDCKno5JqGhCY",
+            language: "en", // language of the results
+          }}
+          onPress={(data, details) => console.log(data, details)}
+          textInputProps={{
+            InputComp: Input,
+            leftIcon: { type: "font-awesome", name: "chevron-left" },
+            errorStyle: { color: "red" },
+          }}
+          placeholder="Search"
+        />
+      </View>
+    </NativeBaseProvider>
   );
 }
 
