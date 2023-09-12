@@ -1,10 +1,18 @@
 import React, { useEffect } from "react";
-import MapView, { LatLng, Marker, AnimatedRegion } from "react-native-maps";
-import { Button, StyleSheet, View } from "react-native";
+import MapView, { LatLng, Marker } from "react-native-maps";
+import { StyleSheet } from "react-native";
 import * as Location from "expo-location";
-import { Dimensions } from "react-native";
+import {
+  IInputProps,
+  Input,
+  NativeBaseProvider,
+  ScrollView,
+  Text,
+  View,
+} from "native-base";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { SafeArea } from "./src/components/uiElements/SafeArea/SafeArea";
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import { Input, NativeBaseProvider } from "native-base";
 
 type Marker = {
   name: string;
@@ -66,54 +74,114 @@ export default function App() {
     getLocationPermission();
   }, []);
 
-  return (
-    <NativeBaseProvider>
-      <View style={styles.container}>
-        <MapView
-          style={styles.map}
-          initialRegion={region}
-          onRegionChange={onRegionChange}
-          showsUserLocation
-          followsUserLocation
-          zoomEnabled
-          scrollEnabled
-          showsScale
-          onLongPress={(e) => {
-            const { coordinate } = e.nativeEvent;
-            addMarker({ name: "custom", coordinate, placeId: "" });
-          }}
-          onMarkerPress={(e) => {
-            console.log(e.nativeEvent);
-          }}
-          onPoiClick={(e) => {
-            const { name, coordinate, placeId } = e.nativeEvent;
-            addMarker({ name, coordinate, placeId });
-          }}
-        >
-          {markers.map((marker, index) => (
-            <Marker
-              key={index}
-              coordinate={marker.coordinate}
-              title={marker.name}
-            />
-          ))}
-        </MapView>
+  const SearchInput = (props: IInputProps) => {
+    return (
+      <Input placeholder="Search" w="full" bgColor="white">
+        {props.children}
+      </Input>
+    );
+  };
 
-        <GooglePlacesAutocomplete
-          query={{
-            key: "AIzaSyC9kogNwEtX1xBO-nNzawbDCKno5JqGhCY",
-            language: "en", // language of the results
-          }}
-          onPress={(data, details) => console.log(data, details)}
-          textInputProps={{
-            InputComp: Input,
-            leftIcon: { type: "font-awesome", name: "chevron-left" },
-            errorStyle: { color: "red" },
-          }}
-          placeholder="Search"
-        />
-      </View>
-    </NativeBaseProvider>
+  const myKey = "AIzaSyC9kogNwEtX1xBO-nNzawbDCKno5JqGhCY";
+
+  return (
+    <SafeAreaProvider>
+      <NativeBaseProvider>
+        <SafeArea>
+          <View p="4" w="full" h="full">
+            <GooglePlacesAutocomplete
+              placeholder="Search destination"
+              minLength={2}
+              onPress={(data, details = null) => {
+                // 'details' is provided when fetchDetails = true
+                console.log(data, details);
+              }}
+              nearbyPlacesAPI="GoogleReverseGeocoding"
+              query={{
+                key: myKey,
+                language: "pt-br",
+                components: "country:br",
+                rankby: "distance",
+              }}
+              enablePoweredByContainer={false}
+              minLength={3}
+              renderRow={(rowData) => {
+                if (!rowData) return <></>;
+
+                const title = rowData.structured_formatting.main_text;
+                const address = rowData.structured_formatting.secondary_text;
+                const test = rowData.types.join(",   ");
+
+                console.log("test:", test);
+
+                return (
+                  <View>
+                    <Text
+                      style={{
+                        fontSize: 14,
+                        flexWrap: "wrap",
+                      }}
+                    >
+                      {title}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        flexWrap: "wrap",
+                        fontWeight: "300",
+                      }}
+                    >
+                      {address}
+                    </Text>
+                    <Text
+                      style={{
+                        fontSize: 12,
+                        flexWrap: "wrap",
+                        fontWeight: "300",
+                      }}
+                    >
+                      {test}
+                    </Text>
+                  </View>
+                );
+              }}
+            />
+          </View>
+          {/* <View zIndex={0}>
+            <MapView
+              style={styles.map}
+              initialRegion={region}
+              onRegionChange={onRegionChange}
+              showsUserLocation
+              followsUserLocation
+              zoomEnabled
+              scrollEnabled
+              showsScale
+              onLongPress={(e) => {
+                const { coordinate } = e.nativeEvent;
+                addMarker({ name: "custom", coordinate, placeId: "" });
+              }}
+              onMarkerPress={(e) => {
+                console.log(e.nativeEvent);
+              }}
+              onPoiClick={(e) => {
+                const { name, coordinate, placeId } = e.nativeEvent;
+                addMarker({ name, coordinate, placeId });
+              }}
+              showsMyLocationButton={false}
+            >
+              {markers.map((marker, index) => (
+                <Marker
+                  key={index}
+                  coordinate={marker.coordinate}
+                  title={marker.name}
+                />
+              ))}
+            </MapView>
+          </View> */}
+        </SafeArea>
+      </NativeBaseProvider>
+    </SafeAreaProvider>
   );
 }
 
