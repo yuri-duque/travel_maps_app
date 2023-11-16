@@ -1,5 +1,5 @@
 import React, { useState, createContext } from "react";
-import { Loading } from "../components/UiElements/Loading/Loading";
+import { Loading } from "../components/uiElements/Loading/Loading";
 
 type AppContextType = {
   isLoading?: boolean;

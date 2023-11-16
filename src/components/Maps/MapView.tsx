@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import MapView, { LatLng, Marker } from "react-native-maps";
 import { StyleSheet } from "react-native";
 import * as Location from "expo-location";
+import { SafeArea } from "../uiElements/SafeArea/SafeArea";
 
 type Marker = {
   name: string;
