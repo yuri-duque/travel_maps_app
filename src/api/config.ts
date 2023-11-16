@@ -6,7 +6,8 @@ import { getRefreshTokenStorage } from "../storage/refreshToken/refreshTokenStor
 import { authNavigationStack } from "../routes/authRoutes";
 
 // const baseURL = "https://gym-server-i9wq.onrender.com/api/";
-const baseURL = "http://localhost:3001/api/";
+const baseURL = "https://ff7f-2804-14c-fc81-8a68-69d1-7b2f-b5c3-601c.ngrok-free.app/api/"; // ngrok
+// const baseURL = "http://localhost:3001/api/";
 
 export const api = axios.create({
   baseURL,

@@ -2,6 +2,7 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
 import { NativeStackNavigationProp } from "@react-navigation/native-stack/lib/typescript/src/types";
+import MapPage from "../../pages/Home/Map";
 
 export type propsAppStack = {
   home: undefined;
@@ -20,7 +21,7 @@ export function AppStack() {
       }}
       initialRouteName="home"
     >
-      <Screen name="home" component={Home} options={{ headerShown: false }}></Screen>
+      <Screen name="home" component={MapPage} options={{ headerShown: false }}></Screen>
     </Navigator>
   );
 }
