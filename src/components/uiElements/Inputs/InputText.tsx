@@ -28,9 +28,10 @@ export function InputText({
       {label && <FormControl.Label>{label}</FormControl.Label>}
       <Input
         fontSize={"md"}
-        _focus={{ bg: "gray.100", borderWidth: 2, borderColor: "blue.300" }}
+        _focus={{ bg: "gray.100", borderWidth: 2, borderColor: "gray.200" }}
         style={{ backgroundColor: "white" }}
         {...props}
+        variant={"rounded"}
       />
       <FormControl.ErrorMessage>{errorMessage}</FormControl.ErrorMessage>
     </FormControl>

@@ -4,10 +4,11 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Platform } from "react-native";
 
 type SafeAreaProps = {
+  backgroundColor?: string;
   children: React.ReactNode;
 };
 
-export function SafeArea({ children }: SafeAreaProps) {
+export function SafeArea({ children, backgroundColor = "white" }: SafeAreaProps) {
   const insets = useSafeAreaInsets();
 
   const plataform = Platform.OS;
@@ -15,7 +16,7 @@ export function SafeArea({ children }: SafeAreaProps) {
   return (
     <View
       style={{
-        backgroundColor: "white",
+        backgroundColor,
         paddingTop: insets.top,
         paddingBottom: plataform === "ios" ? 0 : insets.bottom,
         paddingLeft: insets.left,
@@ -23,7 +24,7 @@ export function SafeArea({ children }: SafeAreaProps) {
         zIndex: 0,
       }}
     >
-      <View background="gray.100" w="full" height="full">
+      <View background={backgroundColor} w="full" height="full">
         {children}
       </View>
     </View>

@@ -20,10 +20,7 @@ async function autoComplete(text: string, radiusDistance: number = 500) {
       },
     });
 
-    console.log(response);
-
-    const data = response.data.data;
-    return data;
+    return response.data.predictions as any[];
   } catch (error: any) {
     console.log("autoComplete error", { error });
     const response = error.response?.data;

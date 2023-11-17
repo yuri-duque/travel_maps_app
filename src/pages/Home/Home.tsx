@@ -7,19 +7,25 @@ import { StyleSheet } from "react-native";
 
 export default function Home() {
   return (
-    <SafeArea>
+    <View style={styles.view}>
       <View style={styles.autocomplete}>
-        <PlacesAutocomplete />
+        <SafeArea backgroundColor="transparent">
+          <PlacesAutocomplete />
+        </SafeArea>
       </View>
 
       <View style={styles.map}>
         <Map />
       </View>
-    </SafeArea>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  view: {
+    width: "100%",
+    height: "100%",
+  },
   map: {
     position: "absolute",
     zIndex: 0,
