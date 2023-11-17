@@ -10,10 +10,9 @@ type Marker = {
 
 interface MapProps {
   mapRef: MutableRefObject<MapView | null>;
-  region?: Region;
 }
 
-export default function Map({ mapRef, region }: MapProps) {
+export default function Map({ mapRef }: MapProps) {
   const [markers, setMarkers] = React.useState<Marker[]>([]);
 
   function addMarker({ coordinate, name, placeId }: Marker) {
@@ -30,7 +29,6 @@ export default function Map({ mapRef, region }: MapProps) {
     <MapView
       ref={mapRef}
       style={styles.map}
-      initialRegion={region}
       showsUserLocation
       followsUserLocation
       zoomEnabled
@@ -62,6 +60,6 @@ const styles = StyleSheet.create({
   },
   map: {
     width: "100%",
-    height: "90%",
+    height: "100%",
   },
 });

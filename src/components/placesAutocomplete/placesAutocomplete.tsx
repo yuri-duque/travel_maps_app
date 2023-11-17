@@ -1,14 +1,25 @@
-import { Box, Text, View } from "native-base";
+import { Box, HStack, Icon, Text, View } from "native-base";
 import React, { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
-import { InputText } from "../uiElements/Inputs/InputText";
 import placesAutocompleteService from "../../services/placesAutocomplete/placesAutocompleteService";
 import { ScrollView } from "react-native-virtualized-view";
 import { Place } from "../../entities/Place";
 import { TextInput } from "react-native";
 import HR from "../uiElements/hr/Hr";
+import placeByIdService from "../../services/placeByIdService/placeByIdService";
+import { TouchableOpacity } from "react-native";
+import { LatLng } from "react-native-maps";
+import { Image } from "react-native";
 
-export default function PlacesAutocomplete() {
+interface PlacesAutocompleteProps {
+  currentLocation: LatLng;
+  animateToRegion: (region: LatLng, duration?: number) => {};
+}
+
+export default function PlacesAutocomplete({
+  currentLocation,
+  animateToRegion,
+}: PlacesAutocompleteProps) {
   const [text, setText] = useState<string>();
   const [places, setPlaces] = useState<Place[] | undefined>();
 
@@ -24,8 +35,34 @@ export default function PlacesAutocomplete() {
   }, [text]);
 
   async function autoComplete(text?: string) {
-    const places = await placesAutocompleteService.autocompleteByCurrentLocation(text);
+    if (!text) {
+      setPlaces(undefined);
+      return;
+    }
+
+    const places = await placesAutocompleteService.autocompleteByCurrentLocation(
+      text,
+      currentLocation
+    );
     setPlaces(places);
+    getPlacesCordination(places);
+  }
+
+  async function getPlacesCordination(places?: Place[]) {
+    if (!places || places.length === 0) return;
+
+    places.forEach((place) => {
+      placeByIdService.getPlaceById(place).then((newPlace) => {
+        if (!newPlace) return;
+
+        const newPlaces = places.map((place) => {
+          if (place.place_id === newPlace.place_id) place = newPlace;
+          return place;
+        });
+
+        setPlaces(newPlaces);
+      });
+    });
   }
 
   return (
@@ -45,9 +82,16 @@ export default function PlacesAutocomplete() {
             <ScrollView style={styles.placesList}>
               {places?.map((place, index) => {
                 return (
-                  <Box key={index} my="3" shadow={2}>
-                    <Text>{place.description}</Text>
-                  </Box>
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.button}
+                    onPress={() => animateToRegion(place.location)}
+                  >
+                    <HStack space={2} alignItems={"center"}>
+                      <Image style={styles.icon} source={{ uri: place.icon }} />
+                      <Text>{place.description}</Text>
+                    </HStack>
+                  </TouchableOpacity>
                 );
               })}
             </ScrollView>
@@ -63,14 +107,12 @@ const styles = StyleSheet.create({
     backgroundColor: "transparent",
     zIndex: 10,
   },
-
   placesContainer: {
     backgroundColor: "white",
     borderWidth: 1,
     borderColor: "#ccc",
     borderRadius: 20,
   },
-
   input: {
     height: 40,
     backgroundColor: "white",
@@ -79,8 +121,14 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     fontSize: 16,
   },
-
   placesList: {
     padding: 12,
+  },
+  icon: {
+    width: 16,
+    height: 16,
+  },
+  button: {
+    marginVertical: 8,
   },
 });

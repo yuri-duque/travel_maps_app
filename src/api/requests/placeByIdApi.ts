@@ -1,28 +1,23 @@
 import { showMessage } from "react-native-flash-message";
 import { AxiosResponse } from "axios";
 import { api } from "../config";
-import { LatLng } from "react-native-maps";
 
-async function autoComplete(text: string, location: LatLng, radiusDistance: string = "500") {
+async function placeById(placeid: string) {
   try {
-    const url = process.env.EXPO_PUBLIC_GOOGLE_AUTO_COMPLETE_URL as string;
+    const url = process.env.EXPO_PUBLIC_GOOGLE_PLACE_BY_ID_URL as string;
     const key = process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY;
-
-    const stringLocation = `${location.latitude} ${location.longitude}`;
 
     const response: AxiosResponse = await api.get(url, {
       params: {
         key,
         language: "pt-BR",
-        input: text,
-        location: stringLocation,
-        radius: radiusDistance,
+        placeid: placeid,
       },
     });
 
-    return response.data.predictions as any[];
+    return response.data.result as any;
   } catch (error: any) {
-    console.log("autoComplete error", { error });
+    console.log("placeById error", { error });
     const response = error.response?.data;
 
     if (response) {
@@ -34,4 +29,4 @@ async function autoComplete(text: string, location: LatLng, radiusDistance: stri
   }
 }
 
-export default { autoComplete };
+export default { placeById };

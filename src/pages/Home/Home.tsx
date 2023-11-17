@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import Map from "../../components/maps/Map";
 import { View } from "native-base";
 import { StyleSheet } from "react-native";
-import MapView, { Region } from "react-native-maps";
+import MapView, { LatLng, Region } from "react-native-maps";
 import locationPermission from "../../services/permission/locationPermission";
 import { SolidButton } from "../../components/uiElements/Buttons/SolidButton";
 import PlacesAutocomplete from "../../components/placesAutocomplete/placesAutocomplete";
@@ -10,7 +10,10 @@ import PlacesAutocomplete from "../../components/placesAutocomplete/placesAutoco
 export default function Home() {
   const mapRef = useRef<MapView>(null);
 
-  const [region, setRegion] = React.useState<Region>();
+  const [currentLocation, setCurrentLocation] = React.useState<LatLng>({
+    latitude: -22.9068467,
+    longitude: -43.1728965,
+  });
 
   useEffect(() => {
     getCurrentLocation();
@@ -19,37 +22,24 @@ export default function Home() {
   async function getCurrentLocation() {
     const current = await locationPermission.getCurrentLocation();
     if (!current) return;
-    const newRegion: Region = { ...current, latitudeDelta: 0.009, longitudeDelta: 0.009 };
-    setRegion(newRegion);
+    setCurrentLocation(current);
+    animateToRegion(current);
   }
 
-  async function animateToRegion(region: Region, duration: number = 800) {
+  async function animateToRegion(location: LatLng, duration: number | undefined = 800) {
+    const region = { ...location, latitudeDelta: 0.009, longitudeDelta: 0.009 };
+
     mapRef.current?.animateToRegion(region, duration);
   }
 
   return (
     <View style={styles.view}>
       <View style={styles.autocomplete}>
-        <PlacesAutocomplete />
+        <PlacesAutocomplete animateToRegion={animateToRegion} currentLocation={currentLocation} />
       </View>
 
-      <SolidButton
-        style={{ marginTop: 24, paddingHorizontal: 12, zIndex: 2 }}
-        onPress={() => {
-          const region: Region = {
-            latitude: -21.779196,
-            longitude: -43.319746,
-            latitudeDelta: 0.009,
-            longitudeDelta: 0.009,
-          };
-          animateToRegion(region);
-        }}
-      >
-        Animate
-      </SolidButton>
-
       <View style={styles.map}>
-        <Map mapRef={mapRef} region={region} />
+        <Map mapRef={mapRef} />
       </View>
     </View>
   );
