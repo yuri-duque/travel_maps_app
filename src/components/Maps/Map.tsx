@@ -3,6 +3,7 @@ import MapView, { LatLng, Marker } from "react-native-maps";
 import { StyleSheet } from "react-native";
 import * as Location from "expo-location";
 import { SafeArea } from "../uiElements/SafeArea/SafeArea";
+import { InputText } from "../uiElements/Inputs/InputText";
 
 type Marker = {
   name: string;
@@ -64,37 +65,33 @@ export default function Map() {
     getLocationPermission();
   }, []);
 
-  const myKey = "AIzaSyC9kogNwEtX1xBO-nNzawbDCKno5JqGhCY";
-
   return (
-    <SafeArea>
-      <MapView
-        style={styles.map}
-        initialRegion={region}
-        onRegionChange={onRegionChange}
-        showsUserLocation
-        followsUserLocation
-        zoomEnabled
-        scrollEnabled
-        showsScale
-        onLongPress={(e) => {
-          const { coordinate } = e.nativeEvent;
-          addMarker({ name: "custom", coordinate, placeId: "" });
-        }}
-        onMarkerPress={(e) => {
-          console.log(e.nativeEvent);
-        }}
-        onPoiClick={(e) => {
-          const { name, coordinate, placeId } = e.nativeEvent;
-          addMarker({ name, coordinate, placeId });
-        }}
-        showsMyLocationButton={false}
-      >
-        {markers.map((marker, index) => (
-          <Marker key={index} coordinate={marker.coordinate} title={marker.name} />
-        ))}
-      </MapView>
-    </SafeArea>
+    <MapView
+      style={styles.map}
+      initialRegion={region}
+      onRegionChange={onRegionChange}
+      showsUserLocation
+      followsUserLocation
+      zoomEnabled
+      scrollEnabled
+      showsScale
+      onLongPress={(e) => {
+        const { coordinate } = e.nativeEvent;
+        addMarker({ name: "custom", coordinate, placeId: "" });
+      }}
+      onMarkerPress={(e) => {
+        console.log(e.nativeEvent);
+      }}
+      onPoiClick={(e) => {
+        const { name, coordinate, placeId } = e.nativeEvent;
+        addMarker({ name, coordinate, placeId });
+      }}
+      showsMyLocationButton={false}
+    >
+      {markers.map((marker, index) => (
+        <Marker key={index} coordinate={marker.coordinate} title={marker.name} />
+      ))}
+    </MapView>
   );
 }
 
