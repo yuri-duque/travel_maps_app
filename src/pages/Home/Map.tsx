@@ -3,8 +3,8 @@ import MapView, { LatLng, Marker } from "react-native-maps";
 import { StyleSheet } from "react-native";
 import { SafeArea } from "../../components/uiElements/SafeArea/SafeArea";
 import locationPermission from "../../services/permission/locationPermission";
-import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
-import { ScrollView } from "react-native-virtualized-view";
+import PlacesAutocomplete from "../../components/placesAutocomplete/placesAutocomplete";
+import navigator from "react-native-geolocation-service";
 
 type Marker = {
   name: string;
@@ -45,26 +45,7 @@ export default function Map() {
 
   return (
     <SafeArea>
-      <ScrollView style={styles.autocompleteView}>
-        <GooglePlacesAutocomplete
-          placeholder="Type a place"
-          query={{ key: process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY }}
-          minLength={2}
-          fetchDetails={true}
-          onPress={(data, details = null) => {
-            console.log("apikey", { key: process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY });
-            console.log(data, details);
-          }}
-          onFail={(error) => {
-            console.log("apikey", { key: process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY });
-            console.log(error);
-          }}
-          onNotFound={() => {
-            console.log("apikey", { key: process.env.EXPO_PUBLIC_GOOGLE_PLACES_API_KEY });
-            console.log("not found");
-          }}
-        />
-      </ScrollView>
+      <PlacesAutocomplete />
 
       <MapView
         style={styles.map}
@@ -99,11 +80,6 @@ export default function Map() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  autocompleteView: {
-    padding: 12,
-    zIndex: 10,
-    backgroundColor: "transparent",
   },
   map: {
     position: "absolute",
