@@ -1,21 +1,46 @@
 import React from "react";
-import { IInputProps, InputLeftAddon } from "native-base";
+import { Input, IInputProps, FormControl, InputGroup, View, Box } from "native-base";
 import { MaterialIcons } from "@expo/vector-icons";
+import { InputTextSideIcon } from "./InputTextSideIcon";
 
-type InputTextIconProps = IInputProps & {
+type Props = IInputProps & {
+  label?: string;
+  errorMessage?: string | null;
+  inputWidth?: number;
   iconWidth?: number;
   leftIconName?: keyof typeof MaterialIcons.glyphMap;
+  rightIconName?: keyof typeof MaterialIcons.glyphMap;
 };
 
-export function InputTextIcon({ iconWidth, leftIconName }: InputTextIconProps) {
-  if (!leftIconName) return <></>;
-
-  const iconColor = "#9aa0a6";
-  const iconSize = 22;
+export function InputText({
+  label,
+  errorMessage = null,
+  inputWidth = 100,
+  iconWidth,
+  leftIconName,
+  rightIconName,
+  ...props
+}: Props) {
+  if (leftIconName) {
+    iconWidth = iconWidth || 15;
+    inputWidth -= iconWidth;
+  }
 
   return (
-    <InputLeftAddon width={`${iconWidth}%` ?? "15%"} py="0" px="2" bg="gray.100">
-      <MaterialIcons name={leftIconName} size={iconSize} color={iconColor} />
-    </InputLeftAddon>
+    <FormControl mb={4} isInvalid={!!errorMessage}>
+      {label && <FormControl.Label>{label}</FormControl.Label>}
+      <InputGroup w="full" style={{ backgroundColor: "white" }}>
+        {leftIconName && <InputTextSideIcon iconWidth={iconWidth} leftIconName={leftIconName} />}
+        {rightIconName && <InputTextSideIcon iconWidth={iconWidth} leftIconName={rightIconName} />}
+        <Input
+          fontSize={"md"}
+          w={`${inputWidth}%`}
+          _focus={{ bg: "gray.100", borderWidth: 2, borderColor: "blue.300" }}
+          {...props}
+        />
+      </InputGroup>
+
+      <FormControl.ErrorMessage>{errorMessage}</FormControl.ErrorMessage>
+    </FormControl>
   );
 }
