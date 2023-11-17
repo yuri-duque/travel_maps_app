@@ -8,11 +8,11 @@ import { StyleSheet } from "react-native";
 export default function Home() {
   return (
     <View style={styles.view}>
-      <View style={styles.autocomplete}>
+      {/* <View style={styles.autocomplete}>
         <SafeArea backgroundColor="transparent">
           <PlacesAutocomplete />
         </SafeArea>
-      </View>
+      </View> */}
 
       <View style={styles.map}>
         <Map />

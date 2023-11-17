@@ -1,9 +1,11 @@
-import React, { useEffect } from "react";
-import MapView, { LatLng, Marker } from "react-native-maps";
+import React, { useEffect, useRef } from "react";
+import MapView, { LatLng, Marker, Region } from "react-native-maps";
 import { StyleSheet } from "react-native";
 import * as Location from "expo-location";
 import { SafeArea } from "../uiElements/SafeArea/SafeArea";
 import { InputText } from "../uiElements/Inputs/InputText";
+import { Button } from "native-base";
+import { SolidButton } from "../uiElements/Buttons/SolidButton";
 
 type Marker = {
   name: string;
@@ -27,6 +29,8 @@ const initialMarkers: Marker[] = [
 export default function Map() {
   const [region, setRegion] = React.useState<any>(null);
   const [markers, setMarkers] = React.useState(initialMarkers);
+
+  const mapRef = useRef<MapView>(null);
 
   function onRegionChange(region: any) {
     setRegion(region);
@@ -66,32 +70,54 @@ export default function Map() {
   }, []);
 
   return (
-    <MapView
-      style={styles.map}
-      initialRegion={region}
-      onRegionChange={onRegionChange}
-      showsUserLocation
-      followsUserLocation
-      zoomEnabled
-      scrollEnabled
-      showsScale
-      onLongPress={(e) => {
-        const { coordinate } = e.nativeEvent;
-        addMarker({ name: "custom", coordinate, placeId: "" });
-      }}
-      onMarkerPress={(e) => {
-        console.log(e.nativeEvent);
-      }}
-      onPoiClick={(e) => {
-        const { name, coordinate, placeId } = e.nativeEvent;
-        addMarker({ name, coordinate, placeId });
-      }}
-      showsMyLocationButton={false}
-    >
-      {markers.map((marker, index) => (
-        <Marker key={index} coordinate={marker.coordinate} title={marker.name} />
-      ))}
-    </MapView>
+    <>
+      <MapView
+        ref={mapRef}
+        style={styles.map}
+        initialRegion={region}
+        onRegionChange={onRegionChange}
+        showsUserLocation
+        followsUserLocation
+        zoomEnabled
+        scrollEnabled
+        showsScale
+        onLongPress={(e) => {
+          const { coordinate } = e.nativeEvent;
+          addMarker({ name: "custom", coordinate, placeId: "" });
+        }}
+        onMarkerPress={(e) => {
+          console.log(e.nativeEvent);
+        }}
+        onPoiClick={(e) => {
+          const { name, coordinate, placeId } = e.nativeEvent;
+          addMarker({ name, coordinate, placeId });
+        }}
+        showsMyLocationButton={false}
+      >
+        {markers.map((marker, index) => (
+          <Marker key={index} coordinate={marker.coordinate} title={marker.name} />
+        ))}
+      </MapView>
+      <SolidButton
+        w="full"
+        onPress={() => {
+          try {
+            console.log("entrou");
+            const region: Region = {
+              latitude: -21.779196,
+              longitude: -43.319746,
+              latitudeDelta: 0.009,
+              longitudeDelta: 0.009,
+            };
+            mapRef.current?.animateToRegion(region, 800);
+          } catch (error) {
+            console.log(error);
+          }
+        }}
+      >
+        Animate
+      </SolidButton>
+    </>
   );
 }
 
@@ -101,6 +127,6 @@ const styles = StyleSheet.create({
   },
   map: {
     width: "100%",
-    height: "100%",
+    height: "90%",
   },
 });
