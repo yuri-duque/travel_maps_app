@@ -27,11 +27,7 @@ async function getCurrentLocation() {
     longitude: location.coords.longitude,
   };
 
-  return {
-    ...current,
-    latitudeDelta: 0.009,
-    longitudeDelta: 0.009,
-  };
+  return current;
 }
 
 export default { getCurrentLocation, getLocationPermission };
