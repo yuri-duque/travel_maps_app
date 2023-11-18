@@ -10,9 +10,16 @@ interface MapProps {
   addMarker: (place_id: string, description: string, location: LatLng) => void;
   addMarkerByLocation: (location: LatLng) => void;
   markers: Marker[];
+  setOpenPlacesResult: (openPlacesResult: boolean) => void;
 }
 
-export default function Map({ mapRef, addMarker, addMarkerByLocation, markers }: MapProps) {
+export default function Map({
+  mapRef,
+  addMarker,
+  addMarkerByLocation,
+  markers,
+  setOpenPlacesResult,
+}: MapProps) {
   const { markedPlaces } = useContext(MarkedPlacesContext);
 
   return (
@@ -36,6 +43,7 @@ export default function Map({ mapRef, addMarker, addMarkerByLocation, markers }:
         addMarker(placeId, name, coordinate);
       }}
       showsMyLocationButton={false}
+      onTouchStart={() => setOpenPlacesResult(false)}
     >
       {markers &&
         markers.map((marker, index) => (

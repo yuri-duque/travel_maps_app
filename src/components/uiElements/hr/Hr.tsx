@@ -9,7 +9,7 @@ export type HRProps = {
 
 export default function HR({ px, color = "#ccc", width = 0.7 }: HRProps) {
   return (
-    <View px={px}>
+    <View px={px} py={0}>
       <View
         style={{
           borderBottomColor: color,

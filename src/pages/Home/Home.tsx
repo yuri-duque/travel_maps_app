@@ -7,13 +7,12 @@ import Map from "../../components/maps/Map";
 import locationPermission from "../../services/permission/locationPermission";
 import PlacesAutocomplete from "../../components/placesAutocomplete/placesAutocomplete";
 import { Marker } from "../../entities/Marker";
-import { Place } from "../../entities/Place";
 
 export default function Home() {
   const mapRef = useRef<MapView>(null);
 
   const [markers, setMarkers] = React.useState<Marker[]>([]);
-  const [markedPlaces, setMarkedPlaces] = React.useState<Place[] | undefined>();
+  const [openPlacesResult, setOpenPlacesResult] = React.useState<boolean>(false);
   const [currentLocation, setCurrentLocation] = React.useState<LatLng>({
     latitude: -22.9068467,
     longitude: -43.1728965,
@@ -63,7 +62,8 @@ export default function Home() {
         <PlacesAutocomplete
           animateToRegion={animateToRegion}
           currentLocation={currentLocation}
-          setMarkedPlaces={setMarkedPlaces}
+          openPlacesResult={openPlacesResult}
+          setOpenPlacesResult={setOpenPlacesResult}
         />
       </View>
 
@@ -73,6 +73,7 @@ export default function Home() {
           addMarker={addMarker}
           addMarkerByLocation={addMarkerByLocation}
           markers={markers}
+          setOpenPlacesResult={setOpenPlacesResult}
         />
       </View>
     </View>

@@ -6,11 +6,24 @@ import placeByIdService from "../services/placeByIdService/placeByIdService";
 type MarkedPlacesContextType = {
   markedPlaces?: Place[] | undefined;
   addMarkedPlace: (places: Place[] | undefined) => void;
+  getPlaceDetails: (place: Place, places: Place[]) => Promise<Place | undefined>;
+};
+
+const defautlPlace: Place = {
+  place_id: "",
+  description: "",
+  address: "",
+  location: { latitude: 0, longitude: 0 },
+  types: [],
+  icon: "",
+  price_lavel: 0,
+  rating: 0,
 };
 
 const defaultMarkedPlacesContextContext: MarkedPlacesContextType = {
   markedPlaces: undefined,
   addMarkedPlace: () => {},
+  getPlaceDetails: async () => defautlPlace,
 };
 
 const MarkedPlacesContext = createContext<MarkedPlacesContextType>(
@@ -26,22 +39,25 @@ const MarkedPlacesContextProvider = ({ children }: any) => {
       return;
     }
 
-    places.forEach((place) => {
-      placeByIdService.getPlaceById(place).then((newPlace) => {
-        if (!newPlace) return;
+    // await getPlaceDetails(places[0], places);
+  }
 
-        const newPlaces = places.map((place) => {
-          if (place.place_id === newPlace.place_id) place = newPlace;
-          return place;
-        });
+  async function getPlaceDetails(place: Place, places: Place[]) {
+    const newPlace = await placeByIdService.getPlaceById(place);
+    if (!newPlace) return;
 
-        setMarkedPlaces(newPlaces);
-      });
+    const newPlaces = places.map((place) => {
+      if (place.place_id === newPlace.place_id) place = newPlace;
+      return place;
     });
+
+    setMarkedPlaces(newPlaces);
+
+    return newPlace;
   }
 
   return (
-    <MarkedPlacesContext.Provider value={{ markedPlaces, addMarkedPlace }}>
+    <MarkedPlacesContext.Provider value={{ markedPlaces, addMarkedPlace, getPlaceDetails }}>
       {children}
     </MarkedPlacesContext.Provider>
   );

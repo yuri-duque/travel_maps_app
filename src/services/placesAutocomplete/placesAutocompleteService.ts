@@ -10,9 +10,12 @@ async function autocompleteByCurrentLocation(input: string, location: LatLng) {
   if (!results) return;
 
   const places = results?.map((result) => {
-    const { description, place_id, types } = result;
+    const { structured_formatting, place_id, types } = result;
 
-    return { description, place_id, types } as Place;
+    const description = structured_formatting.main_text;
+    const address = structured_formatting.secondary_text;
+
+    return { description, address, place_id, types } as Place;
   });
 
   return places;
