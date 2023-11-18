@@ -7,6 +7,7 @@ import Map from "../../components/maps/Map";
 import locationPermission from "../../services/permission/locationPermission";
 import PlacesAutocomplete from "../../components/placesAutocomplete/placesAutocomplete";
 import { Marker } from "../../entities/Marker";
+import CurrentLocationButton from "../../components/currentLocationButton/CurrentLocationButton";
 
 export default function Home() {
   const mapRef = useRef<MapView>(null);
@@ -76,6 +77,8 @@ export default function Home() {
           setOpenPlacesResult={setOpenPlacesResult}
         />
       </View>
+
+      <CurrentLocationButton getCurrentLocation={getCurrentLocation} />
     </View>
   );
 }

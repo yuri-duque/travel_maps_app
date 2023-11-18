@@ -26,18 +26,18 @@ export default function PlacesAutocomplete({
 
   const { markedPlaces, addMarkedPlace, getPlaceDetails } = useContext(MarkedPlacesContext);
 
-  const debaucingTime = Number(process.env.EXPO_PUBLIC_PLACES_AUTOCOMPLETE_DEBOUNCING_TIME || 750);
+  // const debaucingTime = Number(process.env.EXPO_PUBLIC_PLACES_AUTOCOMPLETE_DEBOUNCING_TIME || 750);
 
   useEffect(() => {
     autoComplete(text);
-    const timerId = setTimeout(() => {
-      markedPlaces?.forEach((place) => {
-        getPlaceDetails(place, markedPlaces);
-      });
-    }, debaucingTime);
+    // const timerId = setTimeout(() => {
+    //   markedPlaces?.forEach((place) => {
+    //     getPlaceDetails(place, markedPlaces);
+    //   });
+    // }, debaucingTime);
 
-    // Cleanup function to clear the timeout if a new letter is typed within 1 second
-    return () => clearTimeout(timerId);
+    // // Cleanup function to clear the timeout if a new letter is typed within 1 second
+    // return () => clearTimeout(timerId);
   }, [text]);
 
   async function autoComplete(text?: string) {
@@ -102,7 +102,7 @@ export default function PlacesAutocomplete({
                         }}
                       >
                         <HStack space={2} alignItems={"center"}>
-                          <Image style={styles.icon} source={{ uri: place.icon }} />
+                          {/* <Image style={styles.icon} source={{ uri: place.icon }} /> */}
                           <VStack>
                             <Text fontWeight={"bold"} fontSize={16}>
                               {place.description}
