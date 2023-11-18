@@ -29,8 +29,11 @@ export default function PlacesAutocomplete({
   const debaucingTime = Number(process.env.EXPO_PUBLIC_PLACES_AUTOCOMPLETE_DEBOUNCING_TIME || 750);
 
   useEffect(() => {
+    autoComplete(text);
     const timerId = setTimeout(() => {
-      autoComplete(text);
+      markedPlaces?.forEach((place) => {
+        getPlaceDetails(place, markedPlaces);
+      });
     }, debaucingTime);
 
     // Cleanup function to clear the timeout if a new letter is typed within 1 second

@@ -39,7 +39,7 @@ const MarkedPlacesContextProvider = ({ children }: any) => {
       return;
     }
 
-    // await getPlaceDetails(places[0], places);
+    setMarkedPlaces(places);
   }
 
   async function getPlaceDetails(place: Place, places: Place[]) {

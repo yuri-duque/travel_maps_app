@@ -12,8 +12,11 @@ async function placeById(placeid: string) {
         key,
         language: "pt-BR",
         placeid: placeid,
+        fields: "geometry,icon",
       },
     });
+
+    console.log(response.data.result);
 
     return response.data.result as any;
   } catch (error: any) {
