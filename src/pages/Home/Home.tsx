@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from "react";
-import Map from "../../components/maps/Map";
 import { View } from "native-base";
 import { StyleSheet } from "react-native";
-import MapView, { LatLng, Region } from "react-native-maps";
+import MapView, { LatLng } from "react-native-maps";
+
+import Map from "../../components/maps/Map";
 import locationPermission from "../../services/permission/locationPermission";
 import PlacesAutocomplete from "../../components/placesAutocomplete/placesAutocomplete";
 import { Marker } from "../../entities/Marker";
@@ -72,7 +73,6 @@ export default function Home() {
           addMarker={addMarker}
           addMarkerByLocation={addMarkerByLocation}
           markers={markers}
-          markedPlaces={markedPlaces}
         />
       </View>
     </View>

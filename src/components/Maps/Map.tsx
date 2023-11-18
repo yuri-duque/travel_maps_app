@@ -1,24 +1,20 @@
-import React, { MutableRefObject } from "react";
-import MapView, { LatLng, Marker as MarkerComponent, Region } from "react-native-maps";
+import React, { MutableRefObject, useContext } from "react";
+import MapView, { LatLng, Marker as MarkerComponent } from "react-native-maps";
 import { StyleSheet } from "react-native";
+
 import { Marker } from "../../entities/Marker";
-import { Place } from "../../entities/Place";
+import { MarkedPlacesContext } from "../../context/MarkedPlacesContext";
 
 interface MapProps {
   mapRef: MutableRefObject<MapView | null>;
   addMarker: (place_id: string, description: string, location: LatLng) => void;
   addMarkerByLocation: (location: LatLng) => void;
   markers: Marker[];
-  markedPlaces: Place[] | undefined;
 }
 
-export default function Map({
-  mapRef,
-  addMarker,
-  addMarkerByLocation,
-  markers,
-  markedPlaces,
-}: MapProps) {
+export default function Map({ mapRef, addMarker, addMarkerByLocation, markers }: MapProps) {
+  const { markedPlaces } = useContext(MarkedPlacesContext);
+
   return (
     <MapView
       ref={mapRef}

@@ -1,15 +1,13 @@
-import { Box, HStack, Icon, Text, View } from "native-base";
-import React, { useEffect, useState } from "react";
-import { StyleSheet } from "react-native";
+import { HStack, Text, View } from "native-base";
+import React, { useContext, useEffect, useState } from "react";
+import { StyleSheet, TextInput, TouchableOpacity, Image } from "react-native";
+import { LatLng } from "react-native-maps";
+
 import placesAutocompleteService from "../../services/placesAutocomplete/placesAutocompleteService";
 import { ScrollView } from "react-native-virtualized-view";
 import { Place } from "../../entities/Place";
-import { TextInput } from "react-native";
 import HR from "../uiElements/hr/Hr";
-import placeByIdService from "../../services/placeByIdService/placeByIdService";
-import { TouchableOpacity } from "react-native";
-import { LatLng } from "react-native-maps";
-import { Image } from "react-native";
+import { MarkedPlacesContext } from "../../context/MarkedPlacesContext";
 
 interface PlacesAutocompleteProps {
   currentLocation: LatLng;
@@ -20,10 +18,10 @@ interface PlacesAutocompleteProps {
 export default function PlacesAutocomplete({
   currentLocation,
   animateToRegion,
-  setMarkedPlaces,
 }: PlacesAutocompleteProps) {
   const [text, setText] = useState<string>();
-  const [places, setPlaces] = useState<Place[] | undefined>();
+
+  const { addMarkedPlace, markedPlaces } = useContext(MarkedPlacesContext);
 
   const debaucingTime = Number(process.env.EXPO_PUBLIC_PLACES_AUTOCOMPLETE_DEBOUNCING_TIME || 750);
 
@@ -36,13 +34,9 @@ export default function PlacesAutocomplete({
     return () => clearTimeout(timerId);
   }, [text]);
 
-  useEffect(() => {
-    setMarkedPlaces(places);
-  }, [places]);
-
   async function autoComplete(text?: string) {
     if (!text) {
-      setPlaces(undefined);
+      addMarkedPlace(undefined);
       return;
     }
 
@@ -51,24 +45,7 @@ export default function PlacesAutocomplete({
       currentLocation
     );
 
-    getPlacesCordination(places);
-  }
-
-  async function getPlacesCordination(places?: Place[]) {
-    if (!places || places.length === 0) return;
-
-    places.forEach((place) => {
-      placeByIdService.getPlaceById(place).then((newPlace) => {
-        if (!newPlace) return;
-
-        const newPlaces = places.map((place) => {
-          if (place.place_id === newPlace.place_id) place = newPlace;
-          return place;
-        });
-
-        setPlaces(newPlaces);
-      });
-    });
+    addMarkedPlace(places);
   }
 
   return (
@@ -82,11 +59,11 @@ export default function PlacesAutocomplete({
           placeholderTextColor="gray"
         />
 
-        {places && places.length > 0 && (
+        {markedPlaces && markedPlaces.length > 0 && (
           <>
             <HR px={2} />
             <ScrollView style={styles.placesList}>
-              {places?.map((place, index) => {
+              {markedPlaces?.map((place, index) => {
                 return (
                   <TouchableOpacity
                     key={index}
