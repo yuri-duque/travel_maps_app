@@ -4,12 +4,15 @@ import { View } from "native-base";
 import { StyleSheet } from "react-native";
 import MapView, { LatLng, Region } from "react-native-maps";
 import locationPermission from "../../services/permission/locationPermission";
-import { SolidButton } from "../../components/uiElements/Buttons/SolidButton";
 import PlacesAutocomplete from "../../components/placesAutocomplete/placesAutocomplete";
+import { Marker } from "../../entities/Marker";
+import { Place } from "../../entities/Place";
 
 export default function Home() {
   const mapRef = useRef<MapView>(null);
 
+  const [markers, setMarkers] = React.useState<Marker[]>([]);
+  const [markedPlaces, setMarkedPlaces] = React.useState<Place[] | undefined>();
   const [currentLocation, setCurrentLocation] = React.useState<LatLng>({
     latitude: -22.9068467,
     longitude: -43.1728965,
@@ -26,20 +29,51 @@ export default function Home() {
     animateToRegion(current);
   }
 
+  function addMarker(place_id: string, description: string, location: LatLng) {
+    const marker: Marker = {
+      place_id,
+      description,
+      location,
+    };
+
+    const newMarkers = [...markers, marker];
+    setMarkers(newMarkers);
+  }
+
+  function addMarkerByLocation(location: LatLng) {
+    const marker: Marker = {
+      place_id: "",
+      description: "new location",
+      location,
+    };
+
+    const newMarkers = [...markers, marker];
+    setMarkers(newMarkers);
+  }
+
   async function animateToRegion(location: LatLng, duration: number | undefined = 800) {
     const region = { ...location, latitudeDelta: 0.009, longitudeDelta: 0.009 };
-
     mapRef.current?.animateToRegion(region, duration);
   }
 
   return (
     <View style={styles.view}>
       <View style={styles.autocomplete}>
-        <PlacesAutocomplete animateToRegion={animateToRegion} currentLocation={currentLocation} />
+        <PlacesAutocomplete
+          animateToRegion={animateToRegion}
+          currentLocation={currentLocation}
+          setMarkedPlaces={setMarkedPlaces}
+        />
       </View>
 
       <View style={styles.map}>
-        <Map mapRef={mapRef} />
+        <Map
+          mapRef={mapRef}
+          addMarker={addMarker}
+          addMarkerByLocation={addMarkerByLocation}
+          markers={markers}
+          markedPlaces={markedPlaces}
+        />
       </View>
     </View>
   );

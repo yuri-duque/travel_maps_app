@@ -13,12 +13,14 @@ import { Image } from "react-native";
 
 interface PlacesAutocompleteProps {
   currentLocation: LatLng;
-  animateToRegion: (region: LatLng, duration?: number) => {};
+  animateToRegion: (region: LatLng, duration?: number) => void;
+  setMarkedPlaces: (places: Place[] | undefined) => void;
 }
 
 export default function PlacesAutocomplete({
   currentLocation,
   animateToRegion,
+  setMarkedPlaces,
 }: PlacesAutocompleteProps) {
   const [text, setText] = useState<string>();
   const [places, setPlaces] = useState<Place[] | undefined>();
@@ -34,6 +36,10 @@ export default function PlacesAutocomplete({
     return () => clearTimeout(timerId);
   }, [text]);
 
+  useEffect(() => {
+    setMarkedPlaces(places);
+  }, [places]);
+
   async function autoComplete(text?: string) {
     if (!text) {
       setPlaces(undefined);
@@ -44,7 +50,7 @@ export default function PlacesAutocomplete({
       text,
       currentLocation
     );
-    setPlaces(places);
+
     getPlacesCordination(places);
   }
 

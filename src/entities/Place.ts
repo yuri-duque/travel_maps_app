@@ -1,6 +1,6 @@
 import { LatLng } from "react-native-maps";
 
-export interface Place {
+export type Place = {
   place_id: string;
   description: string;
   types: string[];
@@ -8,4 +8,4 @@ export interface Place {
   icon: string;
   price_lavel: number;
   rating: number;
-}
+};
